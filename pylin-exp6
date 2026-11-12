@@ -1,0 +1,143 @@
+Question:
+Build an AI-Generated Code Quality and Correctness Evaluation Framework using Python to
+automatically evaluate AI-generated code through static analysis using Pylint, type checking using
+Mypy, dynamic testing using Pytest, syntax checking using Python AST, execution testing, quality
+scoring, and automatic improvement suggestions.
+
+2. Required libraries
+Open VS Code terminal and install:
+python -m pip install pylint mypy pytest
+3. Create Python file
+Create a file named:
+
+code_quality.py
+CORRECT CODE
+
+import ast
+import subprocess
+import sys
+
+# AI-generated Python code
+code = """
+def add(a: int, b: int) -> int:
+    return a + b
+"""
+
+filename = "generated_code.py"
+
+with open(filename, "w") as f:
+    f.write(code)
+
+print("AI GENERATED CODE:\n", code)
+
+# 1. Syntax checking using AST
+try:
+    ast.parse(code)
+    syntax = True
+    print("AST Syntax Check: PASSED")
+except SyntaxError:
+    syntax = False
+    print("AST Syntax Check: FAILED")
+
+# 2. Static analysis using Pylint
+pylint = subprocess.run(
+    [sys.executable, "-m", "pylint", filename, "--score=y"],
+    capture_output=True, text=True
+)
+print("\nPylint Analysis:\n", pylint.stdout)
+
+# 3. Type checking using Mypy
+mypy = subprocess.run(
+    [sys.executable, "-m", "mypy", filename],
+    capture_output=True, text=True
+)
+print("Mypy Result:\n", mypy.stdout)
+
+# 4. Dynamic testing using Pytest
+test_code = """
+from generated_code import add
+
+def test_add():
+    assert add(2, 3) == 5
+
+def test_negative():
+    assert add(-2, 2) == 0
+
+def test_zero():
+    assert add(0, 0) == 0
+"""
+
+with open("test_generated.py", "w") as f:
+    f.write(test_code)
+
+pytest = subprocess.run(
+    [sys.executable, "-m", "pytest", "test_generated.py", "-v"],
+    capture_output=True, text=True
+)
+print("Pytest Result:\n", pytest.stdout)
+
+# 5. Execution testing
+namespace = {}
+try:
+    exec(code, namespace)
+    result = namespace["add"](10, 20)
+    execution = True
+    print("Execution Test: PASSED, Output:", result)
+except Exception as e:
+    execution = False
+    print("Execution Test: FAILED", e)
+
+# 6. Quality scoring
+score = (
+    (20 if syntax else 0) +
+    (20 if pylint.returncode == 0 else 0) +
+    (20 if mypy.returncode == 0 else 0) +
+    (20 if pytest.returncode == 0 else 0) +
+    (20 if execution else 0)
+)
+
+print("\nCode Quality Score:", score, "/ 100")
+
+# 7. Improvement suggestions
+print("\nImprovement Suggestions:")
+if not syntax:
+    print("- Fix syntax errors.")
+if pylint.returncode != 0:
+    print("- Improve code style and remove warnings.")
+if mypy.returncode != 0:
+    print("- Correct type annotation errors.")
+if pytest.returncode != 0:
+    print("- Fix failed test cases.")
+if not execution:
+    print("- Fix runtime errors.")
+
+if score == 100:
+    print("- Code passed all evaluation checks.")
+  5. How to run
+Step 1: Save the file using Ctrl + S.
+
+Step 2: Install the required libraries:
+python -m pip install pylint mypy pytest
+
+
+Step 3: Run the program:
+python code_quality.py
+Procedure:
+1. Install the required libraries such as pylint, mypy, and pytest using the Python package
+installer.
+2. Import the required Python modules, including AST, OS, RE, SYS, tempfile, subprocess, and
+textwrap.
+3. Define the sample AI-generated Python code containing an addition function.
+4. Create test cases with expected outputs to verify the correctness of the generated code.
+5. Check the syntax of the Python code using the ast.parse() function.
+6. Save the generated code into a temporary Python file for analysis.
+7. Perform static code analysis using Pylint to identify coding-style issues and potential errors.
+8. Perform type checking using Mypy to identify type-related errors.
+9. Execute the generated code and perform dynamic testing by comparing actual outputs
+with expected outputs.
+10. Calculate the overall code quality score out of 100 based on syntax validity, Pylint score,
+Mypy
+results, dynamic testing, and documentation.
+11. Generate automatic improvement suggestions based on the evaluation results.
+12. Display the complete evaluation report, including syntax checking, static analysis, type
+checking, test results, overall score, and improvement suggestions.
