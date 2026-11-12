@@ -1,0 +1,28 @@
+ep-1
+import ollama
+
+# Natural language description
+prompt = "Write a Python function to find the square of a number."
+
+# Generate function using Ollama
+response = ollama.generate(
+    model='llama3',
+    prompt=prompt + " Return only Python code."
+)
+
+code = response['response'].strip()
+
+# Remove Markdown code fences
+if code.startswith("```"):
+    code = code.split("\n", 1)[1]
+    code = code.rsplit("```", 1)[0].strip()
+
+print("Generated Function:\n", code)
+
+# Execute generated function
+namespace = {}
+exec(code, namespace)
+
+# Test cases
+for n in [2, 3, 5, 10]:
+    print("Input:", n, "Output:", namespace['square'](n))
