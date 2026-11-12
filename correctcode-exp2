@@ -1,0 +1,63 @@
+import ollama
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+
+# Training data
+real = [
+    "def add(a,b): return a+b",
+    "def square(n): return n*n",
+    "def sub(a,b): return a-b"
+]
+
+generated = [
+    "def add(a: int,b: int): return a+b",
+    "def square(n: int): return n**2",
+    "def sub(a: int,b: int): return a-b"
+]
+
+# Train discriminator
+data = real + generated
+labels = ["Real"]*3 + ["Generated"]*3
+
+vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2,4))
+X = vectorizer.fit_transform(data)
+
+classifier = LogisticRegression()
+classifier.fit(X, labels)
+
+# Generate code using CodeLlama
+response = ollama.generate(
+    model="codellama",
+    prompt="Write a Python factorial function. Return only Python code."
+)
+
+code = response["response"].strip()
+
+# Remove code fences
+if code.startswith("```"):
+    code = code.split("\n", 1)[1]
+    code = code.rsplit("```", 1)[0].strip()
+
+print("Generated Code:\n")
+print(code)
+
+# Classify generated code
+result = classifier.predict(vectorizer.transform([code]))
+
+print("\nClassification:", result[0])
+print("\nExperiment Completed Successfully!")
+
+  Run in VS Code terminal:
+python -m pip install ollama scikit-learn
+  Make sure you have downloaded CodeLlama:
+ollama pull codellama
+  4. Run the program
+python gan_codegen.py file
+  Procedure:
+Step 1: Create a dataset of real Python code snippets.
+Step 2: Use CodeLlama in Ollama to generate Python code.
+Step 3: Combine real and generated code samples.
+Step 4: Convert the code into numerical features using TF-IDF.
+Step 5: Train a Logistic Regression classifier as the discriminator.
+Step 6: Classify the real and generated code.
+Step 7: Display the prediction and confidence values.◻
