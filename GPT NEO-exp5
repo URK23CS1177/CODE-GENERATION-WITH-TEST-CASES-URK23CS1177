@@ -1,0 +1,115 @@
+Question:
+Write pseudocode for the following problems and perform test samples using GPT-Neo to generate the
+corresponding Python code:
+1. Find Maximum
+2. Check Even Number
+3. Calculate Factorial
+4. Calculate Average
+5. Reverse a String
+
+2. Required libraries
+Open VS Code terminal and install:
+python -m pip install transformers torch
+
+correct code
+
+from transformers import pipeline
+import re
+
+# Load GPT-Neo model
+generator = pipeline("text-generation", model="EleutherAI/gpt-neo-125M")
+
+# Problems, pseudocode, prompts and test cases
+problems = [
+    {
+        "name": "Find Maximum",
+        "pseudo": "Start -> Read numbers -> Find largest -> Print result -> Stop",
+        "prompt": "def find_maximum(numbers):\n    # Find and return the largest number\n",
+        "function": "find_maximum",
+        "test": ([10, 25, 5, 40, 15], 40)
+    },
+    {
+        "name": "Check Even Number",
+        "pseudo": "Start -> Read number -> Check n % 2 == 0 -> Print result -> Stop",
+        "prompt": "def check_even(n):\n    # Return True if even, otherwise False\n",
+        "function": "check_even",
+        "test": (8, True)
+    },
+    {
+        "name": "Calculate Factorial",
+        "pseudo": "Start -> Read number -> Multiply numbers from 1 to n -> Print factorial -> Stop",
+        "prompt": "def factorial(n):\n    # Calculate and return factorial using a loop\n",
+        "function": "factorial",
+        "test": (5, 120)
+    },
+    {
+        "name": "Calculate Average",
+        "pseudo": "Start -> Read numbers -> Find sum -> Divide by count -> Print average -> Stop",
+        "prompt": "def calculate_average(numbers):\n    # Calculate and return the average\n",
+        "function": "calculate_average",
+        "test": ([10, 20, 30, 40], 25.0)
+    },
+    {
+        "name": "Reverse a String",
+        "pseudo": "Start -> Read string -> Reverse string -> Print result -> Stop",
+        "prompt": "def reverse_string(s):\n    # Return the reversed string\n",
+        "function": "reverse_string",
+        "test": ("hello", "olleh")
+    }
+]
+
+# Generate and test Python code
+for p in problems:
+    print("\n" + "=" * 45)
+    print("PROBLEM:", p["name"])
+    print("PSEUDOCODE:", p["pseudo"])
+
+    result = generator(
+        p["prompt"],
+        max_new_tokens=80,
+        do_sample=False,
+        pad_token_id=generator.tokenizer.eos_token_id
+    )
+
+    code = result[0]["generated_text"]
+
+    # Extract generated function
+    match = re.search(r"def " + p["function"] + r"\(.*", code, re.S)
+
+    if not match:
+        print("Code generation failed. Try again.")
+        continue
+
+    code = match.group(0).split("<|endoftext|>")[0].strip()
+    code = code.split("\ndef ", 1)[0]
+
+    print("\nGENERATED PYTHON CODE:\n", code)
+
+    try:
+        namespace = {}
+        exec(code, namespace)
+
+        actual = namespace[p["function"]](*[p["test"][0]])
+        expected = p["test"][1]
+
+        print("\nINPUT:", p["test"][0])
+        print("EXPECTED OUTPUT:", expected)
+        print("ACTUAL OUTPUT:", actual)
+        print("TEST:", "PASSED" if actual == expected else "FAILED")
+
+    except Exception as e:
+        print("TEST ERROR:", e)
+Procedure:
+1. Install the required Python libraries and load the GPT-Neo 125M pre-trained model using the
+Hugging Face Transformers library.
+2. Load the GPT-Neo tokenizer and model using AutoTokenizer and AutoModelForCausalLM.
+3. Define pseudocode for different programming problems such as Find Maximum, Check Even
+Number, Calculate Factorial, Calculate Average, and Reverse a String.
+4. Create a prompt instructing GPT-Neo to convert the given pseudocode into a Python function.
+5. Tokenize the prompt and provide it as input to the GPT-Neo model.
+6. Generate Python code using the GPT-Neo model and decode the generated output.
+7. Extract the generated Python function and execute it using Python's exec() function.
+8. Validate the generated functions using predefined test cases and use fallback functions if the
+generated code is invalid.
+9. Perform unit testing using Python's unittest framework to verify the correctness of the functions.
+10. Display the final result indicating whether all tests passed or failed.
