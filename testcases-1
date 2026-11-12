@@ -1,0 +1,350 @@
+CODE GENERATION WITH TEST CASES URK23CS1177
+
+
+import ollama
+
+# Natural language description
+prompt = "Write a Python function to find the square of a number."
+
+# Generate function using Ollama
+response = ollama.generate(
+    model='llama3',
+    prompt=prompt + " Return only Python code."
+)
+
+code = response['response']
+print("Generated Function:\n", code)
+
+# Test cases
+namespace = {}
+exec(code, namespace)
+
+for n in [2, 3, 5, 10]:
+    print("Input:", n, "Output:", namespace['square'](n))
+
+
+Ex.No.2 GENERATIVE ADVERSARIAL NETWORK FOR
+
+CODE GENERATION
+
+
+import ollama
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+# Real Python code samples
+real = [
+    "def add(a,b): return a+b",
+    "def square(n): return n*n",
+    "def multiply(a,b): return a*b"
+]
+
+# Generate code using CodeLlama
+response = ollama.generate(
+    model="codellama",
+    prompt="Write a Python function to find factorial. Return only code."
+)
+
+generated = response["response"]
+print("Generated Code:\n", generated)
+
+# Prepare dataset
+X = real + [generated]
+y = [0, 0, 0, 1]  # 0 = Real, 1 = Generated
+
+# Train classifier
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(X)
+
+model = MultinomialNB()
+model.fit(X, y)
+
+# Classify generated code
+prediction = model.predict(vectorizer.transform([generated]))
+
+print("Classification:",
+      "Generated Code" if prediction[0] == 1 else "Real Code")
+Procedure: for 1
+Step 1: Import the required OpenAI library.
+Step 2: Initialize the OpenAI client using an API key.
+Step 3: Get a natural language description of the required function from the user.
+Step 4: Send the description to the GPT API with a prompt requesting valid Python code.
+Step 5: Receive and display the generated Python function code.
+Step 6: If the API is unavailable, generate predefined functions using an offline function generator.
+Step 7: Execute the generated Python code using the exec() function.
+Step 8: Test the generated function with predefined sample inputs.
+Step 9: Compare the actual output with the expected output.
+Step 10: Display whether the test has passed or failed.
+
+Procedure:-2
+Step 1: Import the Ollama library.
+Step 2: Provide a natural language description of the required function.
+Step 3: Generate the Python function using the Llama3 model.
+Step 4: Execute the generated function dynamically using exec().
+Step 5: Test the function using multiple test cases.
+Step 6: Compare the output with the expected result.
+Step 7: Display whether each test case passes or fails.
+
+
+Ex.No.4 Code Completion Using a Pre-trained
+
+Transformer Model
+Procedure:
+1. Install the required libraries such as transformers, torch, gradio, pandas, and matplotlib.
+2. Import the required modules from PyTorch, Transformers, and Gradio.
+3. Load the pre-trained GPT-2 model using AutoTokenizer and AutoModelForCausalLM.
+4. Initialize the GPT-2 tokenizer to convert the input Python code into tokens.
+5. Set the model to evaluation mode using model.eval().
+6. Define a code-completion function that accepts partially written Python code as input.
+7. Generate the code continuation using model.generate() with suitable parameters such as
+max_new_tokens, temperature, and top_p.
+8. Decode the generated tokens back into readable Python code and display the completion.
+
+9. Create a Gradio interface that allows the user to enter partial Python code and view the AI-
+generated completion.
+
+10. Launch and test the application by entering code such as def calculate_average(numbers): and
+observe the generated code continuation
+
+from transformers import pipeline
+import gradio as gr
+
+# Load GPT-2 model
+model = pipeline("text-generation", model="gpt2")
+
+# Code completion function
+def complete_code(code):
+    result = model(code, max_new_tokens=50)
+    return result[0]["generated_text"]
+
+# Gradio interface
+demo = gr.Interface(
+    fn=complete_code,
+    inputs=gr.Textbox(label="Enter Incomplete Code"),
+    outputs=gr.Textbox(label="Completed Code"),
+    title="AI Code Completion"
+)
+
+demo.launch()
+
+Ex.No.5
+
+GPT-NEO Pseudo Code To Python Code
+Procedure:
+1. Install the required Python libraries and load the GPT-Neo 125M pre-trained model using the
+Hugging Face Transformers library.
+2. Load the GPT-Neo tokenizer and model using AutoTokenizer and AutoModelForCausalLM.
+3. Define pseudocode for different programming problems such as Find Maximum, Check Even
+Number, Calculate Factorial, Calculate Average, and Reverse a String.
+4. Create a prompt instructing GPT-Neo to convert the given pseudocode into a Python function.
+5. Tokenize the prompt and provide it as input to the GPT-Neo model.
+6. Generate Python code using the GPT-Neo model and decode the generated output.
+7. Extract the generated Python function and execute it using Python's exec() function.
+8. Validate the generated functions using predefined test cases and use fallback functions if the
+generated code is invalid.
+9. Perform unit testing using Python's unittest framework to verify the correctness of the functions.
+10. Display the final result indicating whether all tests passed or failed.
+
+
+from transformers import pipeline
+import unittest
+
+# Load GPT-Neo model
+model = pipeline("text-generation", model="EleutherAI/gpt-neo-125M")
+
+# Pseudocode examples
+problems = {
+    "Find Maximum": "Find the largest number in a list.",
+    "Check Even Number": "Check whether a number is even.",
+    "Calculate Factorial": "Find the factorial of a number.",
+    "Calculate Average": "Calculate the average of a list.",
+    "Reverse a String": "Reverse the given string."
+}
+
+# Generate Python code
+for name, task in problems.items():
+    prompt = "Write Python code to " + task
+    result = model(prompt, max_new_tokens=60, do_sample=False)
+
+    print("\n", name)
+    print("Generated Code:\n", result[0]["generated_text"])
+
+# Python functions for testing
+def find_max(a):
+    return max(a)
+
+def is_even(n):
+    return n % 2 == 0
+
+def factorial(n):
+    return 1 if n == 0 else n * factorial(n-1)
+
+def average(a):
+    return sum(a) / len(a)
+
+def reverse_string(s):
+    return s[::-1]
+
+# Unit testing
+class TestCode(unittest.TestCase):
+    def test_max(self):
+        self.assertEqual(find_max([2, 5, 8]), 8)
+
+    def test_even(self):
+        self.assertTrue(is_even(4))
+
+    def test_factorial(self):
+        self.assertEqual(factorial(5), 120)
+
+    def test_average(self):
+        self.assertEqual(average([2, 4, 6]), 4)
+
+    def test_reverse(self):
+        self.assertEqual(reverse_string("hello"), "olleh")
+
+unittest.main()
+
+
+Ex.No.6 AI-Generated Code Quality and
+
+Correctness Evaluation Framework
+Procedure:
+1. Install the required libraries such as pylint, mypy, and pytest using the Python package
+installer.
+2. Import the required Python modules, including AST, OS, RE, SYS, tempfile, subprocess, and
+textwrap.
+3. Define the sample AI-generated Python code containing an addition function.
+4. Create test cases with expected outputs to verify the correctness of the generated code.
+5. Check the syntax of the Python code using the ast.parse() function.
+6. Save the generated code into a temporary Python file for analysis.
+7. Perform static code analysis using Pylint to identify coding-style issues and potential errors.
+8. Perform type checking using Mypy to identify type-related errors.
+9. Execute the generated code and perform dynamic testing by comparing actual outputs
+with expected outputs.
+10. Calculate the overall code quality score out of 100 based on syntax validity, Pylint score,
+Mypy
+results, dynamic testing, and documentation.
+11. Generate automatic improvement suggestions based on the evaluation results.
+12. Display the complete evaluation report, including syntax checking, static analysis, type
+checking, test results, overall score, and improvement suggestions.
+
+
+import ast
+import subprocess
+
+# AI-generated Python code
+code = """
+def add(a, b):
+    return a + b
+"""
+
+# Save code into a file
+with open("generated.py", "w") as f:
+    f.write(code)
+
+# 1. Syntax checking using AST
+try:
+    ast.parse(code)
+    print("Syntax Check: Passed")
+except SyntaxError as e:
+    print("Syntax Error:", e)
+
+# 2. Static analysis using Pylint
+result = subprocess.run(
+    ["pylint", "generated.py"],
+    capture_output=True,
+    text=True
+)
+
+print("\nPylint Analysis:")
+print(result.stdout)
+
+
+
+
+2nd code for output 
+
+
+import ast
+import subprocess
+
+# AI-generated Python code
+code = """
+def add(a: int, b: int) -> int:
+    return a + b
+
+print(add(10, 20))
+"""
+
+# Save code
+with open("generated.py", "w") as f:
+    f.write(code)
+
+score = 0
+
+# 1. AST Syntax Checking
+try:
+    ast.parse(code)
+    print("AST Syntax Check: Passed")
+    score += 20
+except SyntaxError:
+    print("AST Syntax Check: Failed")
+
+# 2. Pylint Static Analysis
+p = subprocess.run(
+    ["pylint", "generated.py"],
+    capture_output=True, text=True
+)
+print("\nPylint Analysis:\n", p.stdout)
+if p.returncode == 0:
+    score += 20
+
+# 3. Mypy Type Checking
+m = subprocess.run(
+    ["mypy", "generated.py"],
+    capture_output=True, text=True
+)
+print("\nMypy Analysis:\n", m.stdout)
+if m.returncode == 0:
+    score += 20
+
+# 4. Execution Testing
+e = subprocess.run(
+    ["python", "generated.py"],
+    capture_output=True, text=True
+)
+print("\nExecution Output:", e.stdout.strip())
+if e.returncode == 0:
+    score += 20
+
+# 5. Pytest Dynamic Testing
+test_code = """
+from generated import add
+
+def test_add():
+    assert add(2, 3) == 5
+
+def test_add_negative():
+    assert add(-2, -3) == -5
+"""
+
+with open("test_generated.py", "w") as f:
+    f.write(test_code)
+
+t = subprocess.run(
+    ["pytest", "-q", "test_generated.py"],
+    capture_output=True, text=True
+)
+print("\nPytest Results:\n", t.stdout)
+if t.returncode == 0:
+    score += 20
+
+# 6. Quality Score
+print("Quality Score:", score, "/100")
+
+# 7. Improvement Suggestions
+if score == 100:
+    print("Suggestion: Code quality is good.")
+else:
+    print("Suggestion: Fix syntax, type, or testing errors.")
+
