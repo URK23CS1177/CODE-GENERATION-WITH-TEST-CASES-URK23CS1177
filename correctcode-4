@@ -1,0 +1,77 @@
+Question:
+Generative Adversarial Network for Code Generation
+Construct a simplified GAN-style architecture for code generation where an LLM acts as the generator
+and a machine-learning classifier acts as the discriminator.
+
+
+from transformers import pipeline
+import gradio as gr
+
+# Load pre-trained GPT-2 model
+generator = pipeline("text-generation", model="gpt2")
+
+# Code completion function
+def complete_code(code):
+    result = generator(
+        code,
+        max_new_tokens=50,
+        num_return_sequences=1,
+        pad_token_id=50256,
+        do_sample=True,
+        temperature=0.7
+    )
+    return result[0]["generated_text"]
+
+# Create Gradio interface
+app = gr.Interface(
+    fn=complete_code,
+    inputs=gr.Textbox(
+        lines=5,
+        label="Enter Incomplete Python Code",
+        placeholder="def add(a, b):"
+    ),
+    outputs=gr.Textbox(
+        lines=10,
+        label="Generated Code Completion"
+    ),
+    title="AI Code Completion using GPT-2"
+)
+
+# Launch application
+app.launch()
+
+1. Required libraries
+Open the VS Code terminal and install these libraries:
+python -m pip install transformers torch gradio  
+2. Create a Python file
+Create a new file named:
+
+code_completion.py
+ Ex.No.4 Code Completion Using a Pre-trained
+
+Transformer Model
+Procedure:
+1. Install the required libraries such as transformers, torch, gradio, pandas, and matplotlib.
+2. Import the required modules from PyTorch, Transformers, and Gradio.
+3. Load the pre-trained GPT-2 model using AutoTokenizer and AutoModelForCausalLM.
+4. Initialize the GPT-2 tokenizer to convert the input Python code into tokens.
+5. Set the model to evaluation mode using model.eval().
+6. Define a code-completion function that accepts partially written Python code as input.
+7. Generate the code continuation using model.generate() with suitable parameters such as
+max_new_tokens, temperature, and top_p.
+8. Decode the generated tokens back into readable Python code and display the completion.
+
+9. Create a Gradio interface that allows the user to enter partial Python code and view the AI-
+generated completion.
+
+10. Launch and test the application by entering code such as def calculate_average(numbers): and
+observe the generated code continuation
+
+
+http://127.0.0.1:7860 -output 
+Step 3: In the input textbox, enter:
+def add(a, b):
+
+
+
+  
